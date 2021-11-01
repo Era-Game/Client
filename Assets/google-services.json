@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "254600838705",
+    "firebase_url": "https://team-building-game-6bd67-default-rtdb.firebaseio.com",
+    "project_id": "team-building-game-6bd67",
+    "storage_bucket": "team-building-game-6bd67.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254600838705:android:6c549f653fe1e31b2a9f10",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.NewEra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254600838705-q45m9aujoha2pt54lnhoacrdh2rbu71r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DefaultCompany.NewEra",
+            "certificate_hash": "1acc96c1591c59adf004657c33c8ab5cd92d4049"
+          }
+        },
+        {
+          "client_id": "254600838705-p74i1kl4750rupkt9qjnrso7bl1b94b2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJTxd05L4DOSJAyKxDD2GN6xrgVq5t140"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254600838705-p74i1kl4750rupkt9qjnrso7bl1b94b2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

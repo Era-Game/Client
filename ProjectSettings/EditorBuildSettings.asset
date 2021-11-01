@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Intro Scene.unity
+    guid: ac65c7a1b0f3fb74abbb324a5ba34f83
+  - enabled: 1
+    path: Assets/Scenes/Login.unity
+    guid: 1598fe1c044b8d047a7f314b52a1cef2
+  - enabled: 1
+    path: Assets/Scenes/Loading.unity
+    guid: c4bf8f8ca03ebd243abbd15e6025c6d0
+  - enabled: 1
+    path: Assets/Scenes/Organization Menu.unity
+    guid: fe01ce84343fb624bbf222a2be2bb93e
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 32076a3d80ced1f49ad8bc1f04bc6c2e
+  - enabled: 1
+    path: Assets/Scenes/Rejoin Scene.unity
+    guid: 812a1274f87757143990c561013347b1
+  - enabled: 1
+    path: Assets/Scenes/Custom Game Menu.unity
+    guid: c05906a6915f4124599477b9e73fc6ed
+  - enabled: 1
+    path: Assets/Scenes/Normal Race/Game Play.unity
+    guid: 2814788725784dc4a88271de065f07fd
+  - enabled: 1
+    path: Assets/Scenes/Normal Race/Game Scene.unity
+    guid: 6bf25579a1d2dfa4ca778e5fb2a1ad8c
+  - enabled: 1
+    path: Assets/Scenes/Normal Race/Win Scene.unity
+    guid: f5d7549c156769046b2b4d79d0fd0a6d
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Relay Game.unity
+    guid: 1c4ed7a2228944e4da5a39bcd47e1f19
+  - enabled: 1
+    path: Assets/Scenes/Tests/Test Scene.unity
+    guid: 3b918914af46bcb4abc5769f99e28b8b
+  - enabled: 1
+    path: Assets/Scenes/Tests/Test Login.unity
+    guid: a6c8caba772e4694d9393c8a4b283525
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Team Lobby.unity
+    guid: 853b3779523a3394d85c57cea7181a8c
+  - enabled: 1
+    path: Assets/Scenes/Game Lobby.unity
+    guid: 1c1d5724ff702d647bdad392b4fa9059
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Team Menu.unity
+    guid: 7ccaaaa408b81c644bd14eb6f9410423
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Relay Win Scene.unity
+    guid: d97c5bd9edecdff4ab08f488d77b8b53
+  - enabled: 1
+    path: Assets/Scenes/Skin Shop.unity
+    guid: 96c54425ce0cf7d48a1496f8c1051156
+  - enabled: 1
+    path: Assets/Scenes/Normal Race/Queue.unity
+    guid: dc783cd82b1d0b44ab56ab7d1754ca8a
+  - enabled: 1
+    path: Assets/Firebase/Sample/Auth/MainScene.unity
+    guid: 3a65e5d8e86987f41aa4a3b3b96b8b0c
+  - enabled: 1
+    path: Assets/Scenes/Tests/SampleScene.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Custom Relay Game Lobby.unity
+    guid: 378cf458355854b4385e616915a35d74
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Spectator Menu.unity
+    guid: afc1a312726bccb4ab49f8bff5d3f1eb
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Spectator Lobby.unity
+    guid: 6bbbbdd873163ea42a9da37f49cb1230
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Spectator Scene.unity
+    guid: 679ed90326822ce4baa206092b2793b8
+  - enabled: 1
+    path: Assets/Scenes/Relay Race/Spectator Win Scene.unity
+    guid: 76aaacc2d79c3af4c88937858454ce5e
+  - enabled: 1
+    path: Assets/Scenes/Pet Scene.unity
+    guid: 82fe851bea6f0214f9cc8f69e78feb1a
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  m_configObjects: {}
