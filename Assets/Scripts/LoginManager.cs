@@ -106,7 +106,7 @@ public class LoginManager : MonoBehaviour
     }
     public void login()
     {
-        FirebaseManager.instance.LoginButton();
+        AuthManager.instance.HandleLoginBtn();
     }
 
     public void register()

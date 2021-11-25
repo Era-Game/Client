@@ -16,7 +16,6 @@ public class FirebaseManager : MonoBehaviour
     public static FirebaseManager instance;
 
     public bool gameStart = false;
-    LoginManager login_manager;
 
     //Firebase variables
     [Header("Firebase")]
@@ -43,7 +42,6 @@ public class FirebaseManager : MonoBehaviour
 
     public List<string> gameIDList = new List<string>();
     private ArrayList teamAmountInEachGame = new ArrayList();
-    private bool needsUpdate;
     private bool start = false;
 
 
@@ -70,12 +68,8 @@ public class FirebaseManager : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(CheckAndFixDependancies());
-
-        login_manager = FindObjectOfType<LoginManager>();
+        //StartCoroutine(CheckAndFixDependancies());
         createLocalGUID();
-
-        needsUpdate = true;
     }
 
     void OnDisable()

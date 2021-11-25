@@ -16,10 +16,4 @@ public class IntroManager : MonoBehaviour
         anim = crossfade.GetComponent<Animator>();
         LevelLoader.instance.ClearCrossFade();
     }
-   
-
-    public void loadScene(string str)
-    {
-        LevelLoader.instance.loadScene(str);
-    }
 }
