@@ -38,7 +38,7 @@ public class LoginManager : MonoBehaviour
 
     public string getLoginPassword() 
     {
-        Debug.Log("Got Login Email: " + passwordLoginField.text);
+        Debug.Log("Got Login Password: " + passwordLoginField.text);
         return passwordLoginField.text;
     }
     public void clearInputFeilds()

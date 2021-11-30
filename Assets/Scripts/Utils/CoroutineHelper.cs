@@ -12,6 +12,7 @@ namespace CoroutineHelper
         {
             _target = target_;
             coroutine = owner.StartCoroutine(Run());
+            Debug.Log("start coroutine");
         }
 
         private IEnumerator Run()

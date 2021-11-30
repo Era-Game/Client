@@ -705,6 +705,7 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator LoadUserData()
     {
+        Debug.Log("[PlayerManager] Load User Data called.");
         dataRecieved = false;
 
         //Get the currently logged in user data

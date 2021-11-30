@@ -47,7 +47,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        
+        Debug.Log("[PlayerManager] Start");
         InvokeRepeating("syncData", 5f, 2f);
         dataLoaded = false;
         loggedIn = false;
