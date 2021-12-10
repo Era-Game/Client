@@ -1,12 +1,6 @@
-using System.Collections;
 using UnityEngine;
-using Firebase;
-using Firebase.Auth;
-using Firebase.Database;
 using TMPro;
-using System.Linq;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using Managers;
 
 public class LoginManager : MonoBehaviour
 {

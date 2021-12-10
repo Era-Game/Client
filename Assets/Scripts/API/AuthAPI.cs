@@ -5,116 +5,120 @@ using Model;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class AuthAPI : MonoBehaviour
+namespace APIs
 {
-    class Request<T>
+    public class AuthAPI : MonoBehaviour
     {
-        public T Data { get; set; }
-
-        public UnityWebRequest Post(string url)
+        class Request<T>
         {
-            string jsonData = JsonUtility.ToJson(Data);
-            Debug.Log(jsonData);
-            byte[] postData = Encoding.UTF8.GetBytes(jsonData);
+            public T Data { get; set; }
 
-            UnityWebRequest request = UnityWebRequest.Post(url, new WWWForm());
-            request.uploadHandler = new UploadHandlerRaw(postData);
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Accept", "application/json");
-            return request;
+            public UnityWebRequest Post(string url)
+            {
+                string jsonData = JsonUtility.ToJson(Data);
+                Debug.Log(jsonData);
+                byte[] postData = Encoding.UTF8.GetBytes(jsonData);
+
+                UnityWebRequest request = UnityWebRequest.Post(url, new WWWForm());
+                request.uploadHandler = new UploadHandlerRaw(postData);
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.SetRequestHeader("Accept", "application/json");
+                return request;
+            }
         }
-    }
 
-    public static AuthAPI instance;
+        public static AuthAPI instance;
 
-    [Serializable]
-    public class LoginRequest
-    {
-        public string email;
-        public string password;
-
-        public LoginRequest(string email, string password)
+        [Serializable]
+        public class LoginRequest
         {
-            this.email = email;
-            this.password = password;
+            public string email;
+            public string password;
+
+            public LoginRequest(string email, string password)
+            {
+                this.email = email;
+                this.password = password;
+            }
         }
-    }
 
-    [Serializable]
-    public class LoginWithTokenRequest
-    {
-        public string accessToken;
-
-        public LoginWithTokenRequest(string token)
+        [Serializable]
+        public class LoginWithTokenRequest
         {
-            this.accessToken = token;
+            public string accessToken;
+
+            public LoginWithTokenRequest(string token)
+            {
+                this.accessToken = token;
+            }
         }
-    }
 
-    [Serializable]
-    public class LoginResponse
-    {
-        public string status;
-        public User user;
-        public string access_token;
-
-        public LoginResponse CreateFromJSON(string jsonString)
+        [Serializable]
+        public class LoginResponse
         {
-            return JsonUtility.FromJson<LoginResponse>(jsonString);
+            public string status;
+            public User user;
+            public string access_token;
+
+            public LoginResponse CreateFromJSON(string jsonString)
+            {
+                return JsonUtility.FromJson<LoginResponse>(jsonString);
+            }
         }
-    }
 
-    public IEnumerator Login(string email, string password)
-    {
-        Debug.Log("[AuthAPI] start login");
-        Request<LoginRequest> req = new Request<LoginRequest>();
-        req.Data = new LoginRequest(email, password);
-        UnityWebRequest request = req.Post("http://ec2-3-112-239-208.ap-northeast-1.compute.amazonaws.com/auth/login");
-        yield return request.SendWebRequest();
+        public IEnumerator Login(string email, string password)
+        {
+            Debug.Log("[AuthAPI] start login");
+            Request<LoginRequest> req = new Request<LoginRequest>();
+            req.Data = new LoginRequest(email, password);
+            UnityWebRequest request = req.Post("http://ec2-3-112-239-208.ap-northeast-1.compute.amazonaws.com/auth/login");
+            yield return request.SendWebRequest();
 
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            Debug.Log(request.error);
-            yield return null;
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(request.error);
+                yield return null;
+            }
+            else
+            {
+                string text = request.downloadHandler.text;
+                Debug.Log("Response text:" + text);
+                yield return new LoginResponse().CreateFromJSON(text);
+            }
         }
-        else
-        {
-            string text = request.downloadHandler.text;
-            Debug.Log("Response text:" + text);
-            yield return new LoginResponse().CreateFromJSON(text);
-        }
-    }
 
-    public IEnumerator LoginWithToken(string token)
-    {
-        Request<LoginWithTokenRequest> req = new Request<LoginWithTokenRequest>();
-        req.Data = new LoginWithTokenRequest(token);
-        UnityWebRequest request = req.Post("http://ec2-3-112-239-208.ap-northeast-1.compute.amazonaws.com/auth/login");
-        yield return request.SendWebRequest();
+        public IEnumerator LoginWithToken(string token)
+        {
+            Request<LoginWithTokenRequest> req = new Request<LoginWithTokenRequest>();
+            req.Data = new LoginWithTokenRequest(token);
+            UnityWebRequest request = req.Post("http://ec2-3-112-239-208.ap-northeast-1.compute.amazonaws.com/auth/login");
+            yield return request.SendWebRequest();
 
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            Debug.Log(request.error);
-            yield return null;
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(request.error);
+                yield return null;
+            }
+            else
+            {
+                string text = request.downloadHandler.text;
+                Debug.Log("Response text:" + text);
+                yield return new LoginResponse().CreateFromJSON(text);
+            }
         }
-        else
-        {
-            string text = request.downloadHandler.text;
-            Debug.Log("Response text:" + text);
-            yield return new LoginResponse().CreateFromJSON(text);
-        }
-    }
 
-    private void Awake()
-    {
-        if (instance != null)
+        private void Awake()
         {
-            Destroy(gameObject);
-        }
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
+            if (instance != null)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
         }
     }
 }
+

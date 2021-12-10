@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CustomGameMenuManager : MonoBehaviour
+namespace Managers
 {
-    public void custom_relay_game()
+    public class CustomGameMenuManager : MonoBehaviour
     {
-        PlayerManager.instance.setGameStatus("Custom Relay Game", "In Team Menu");
-        SceneManager.LoadScene("Team Menu");
-    }
+        public void custom_relay_game()
+        {
+            PlayerManager.instance.setGameStatus("Custom Relay Game", "In Team Menu");
+            SceneManager.LoadScene("Team Menu");
+        }
 
-    public void back_Button()
-    {
-        SceneManager.LoadScene("Game Lobby");
+        public void back_Button()
+        {
+            SceneManager.LoadScene("Game Lobby");
+        }
     }
 }
+

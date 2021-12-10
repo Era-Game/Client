@@ -4,83 +4,87 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class TeamLobbyPlayerSpawnManager : MonoBehaviour
+namespace Managers
 {
-    [SerializeField] GameObject[] playerSpawns;
-    [SerializeField] GameObject[] clones = new GameObject[10];
-    public TMP_Text[] username_Text;
 
-    public TeamData teamData;
-    private int localVersion = -1;
-    private string[] localNameList = new string[10];
-    private Animator[] anims;
-
-    private bool startUpdate;
-    private bool needsUpdate;
-
-    private void Start()
+    public class TeamLobbyPlayerSpawnManager : MonoBehaviour
     {
-        startUpdate = false;
-        needsUpdate = true;
-        clones = new GameObject[10];
-        anims = new Animator[10];
-        localNameList = new string[10];
-        StartCoroutine(startTimer());
-    }
+        [SerializeField] GameObject[] playerSpawns;
+        [SerializeField] GameObject[] clones = new GameObject[10];
+        public TMP_Text[] username_Text;
 
-    private IEnumerator startTimer()
-    {
-        yield return new WaitForSecondsRealtime(2f);
-        startUpdate = true;
-    }
+        public TeamData teamData;
+        private int localVersion = -1;
+        private string[] localNameList = new string[10];
+        private Animator[] anims;
 
-    // Update is called once per frame
-    void Update()
-    {
-        teamData = API.instance.getTeamData();
+        private bool startUpdate;
+        private bool needsUpdate;
 
-        if (needsUpdate && startUpdate)
+        private void Start()
         {
-            StartCoroutine(update_player_spawn_coroutine());
+            startUpdate = false;
+            needsUpdate = true;
+            clones = new GameObject[10];
+            anims = new Animator[10];
+            localNameList = new string[10];
+            StartCoroutine(startTimer());
         }
-    }
 
-    private IEnumerator update_player_spawn_coroutine()
-    {
-        needsUpdate = false;
-        yield return new WaitForEndOfFrame();
-
-        
-        for (int i = 0; i < teamData.nameList.Length; i++)
+        private IEnumerator startTimer()
         {
-            if (localNameList[i] != teamData.nameList[i])
+            yield return new WaitForSecondsRealtime(2f);
+            startUpdate = true;
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            teamData = API.instance.getTeamData();
+
+            if (needsUpdate && startUpdate)
             {
-                Destroy(clones[i]);
-
-                if (teamData.nameList[i] != "placeholder")
-                {
-                    playerSpawns[i].SetActive(true);
-                    clones[i] = Instantiate(SkinManager.instance.getSkinByID(int.Parse(teamData.skinIDList[i])), playerSpawns[i].transform.position, Quaternion.identity);
-                    clones[i].transform.parent = playerSpawns[i].transform;
-                    clones[i].transform.Rotate(0, (i * 36.0f) - 90, 0);
-
-                    clones[i].GetComponent<PlaneTexture>().setImage(teamData.profileImageUrlList[i]);
-                    clones[i].GetComponent<PlaneTexture>().setName(teamData.nameList[i]);
-
-                    anims[i] = clones[i].GetComponent<Animator>();
-                    anims[i].SetInteger("state", 0);
-                }
-                else
-                {
-                    playerSpawns[i].SetActive(false);
-                }
+                StartCoroutine(update_player_spawn_coroutine());
             }
         }
 
-        localNameList = teamData.nameList;
-        
-        yield return new WaitForSeconds(0.5f);
+        private IEnumerator update_player_spawn_coroutine()
+        {
+            needsUpdate = false;
+            yield return new WaitForEndOfFrame();
 
-        needsUpdate = true;
+
+            for (int i = 0; i < teamData.nameList.Length; i++)
+            {
+                if (localNameList[i] != teamData.nameList[i])
+                {
+                    Destroy(clones[i]);
+
+                    if (teamData.nameList[i] != "placeholder")
+                    {
+                        playerSpawns[i].SetActive(true);
+                        clones[i] = Instantiate(SkinManager.instance.getSkinByID(int.Parse(teamData.skinIDList[i])), playerSpawns[i].transform.position, Quaternion.identity);
+                        clones[i].transform.parent = playerSpawns[i].transform;
+                        clones[i].transform.Rotate(0, (i * 36.0f) - 90, 0);
+
+                        clones[i].GetComponent<PlaneTexture>().setImage(teamData.profileImageUrlList[i]);
+                        clones[i].GetComponent<PlaneTexture>().setName(teamData.nameList[i]);
+
+                        anims[i] = clones[i].GetComponent<Animator>();
+                        anims[i].SetInteger("state", 0);
+                    }
+                    else
+                    {
+                        playerSpawns[i].SetActive(false);
+                    }
+                }
+            }
+
+            localNameList = teamData.nameList;
+
+            yield return new WaitForSeconds(0.5f);
+
+            needsUpdate = true;
+        }
     }
 }

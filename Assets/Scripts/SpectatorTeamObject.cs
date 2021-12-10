@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
+using Managers;
 
 public class SpectatorTeamObject : MonoBehaviour
 {

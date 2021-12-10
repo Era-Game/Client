@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using TMPro; 
+using TMPro;
+using Managers;
 
 public class TeamLobbyManager : MonoBehaviour
 {

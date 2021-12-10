@@ -1,41 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
+using Managers;
 using UnityEngine;
 
-public class TapButtonController : MonoBehaviour
+namespace Controllers
 {
-    [SerializeField] string Button_Name = "none";
 
-    Animator anim;
-    bool activated;
-    // Start is called before the first frame update
-    void Start()
+    public class TapButtonController : MonoBehaviour
     {
-        activated = false;
-        anim = gameObject.GetComponent<Animator>();
-        anim.SetTrigger("game_start");
-    }
+        [SerializeField] string Button_Name = "none";
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Button_Name == "Left Tap Button")
+        Animator anim;
+        bool activated;
+        // Start is called before the first frame update
+        void Start()
         {
-            activated = RelayGameManager.instance.getLeftTapButtonStatus();
-        }
-        else if (Button_Name == "Right Tap Button")
-        {
-            activated = RelayGameManager.instance.getRightTapButtonStatus();
+            activated = false;
+            anim = gameObject.GetComponent<Animator>();
+            anim.SetTrigger("game_start");
         }
 
-        if (RelayGameManager.instance.getGameStart() && activated)
+        // Update is called once per frame
+        void Update()
         {
-            anim.SetInteger("state", 1);
-        }
-        else if (RelayGameManager.instance.getGameStart() && !activated)
-        {
-            anim.SetInteger("state", 0);
-        }
+            if (Button_Name == "Left Tap Button")
+            {
+                activated = RelayGameManager.instance.getLeftTapButtonStatus();
+            }
+            else if (Button_Name == "Right Tap Button")
+            {
+                activated = RelayGameManager.instance.getRightTapButtonStatus();
+            }
 
+            if (RelayGameManager.instance.getGameStart() && activated)
+            {
+                anim.SetInteger("state", 1);
+            }
+            else if (RelayGameManager.instance.getGameStart() && !activated)
+            {
+                anim.SetInteger("state", 0);
+            }
+
+        }
     }
 }

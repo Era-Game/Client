@@ -6,6 +6,7 @@ using Firebase.Auth;
 using Firebase.Database;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Managers;
 
 public class Test : MonoBehaviour
 {

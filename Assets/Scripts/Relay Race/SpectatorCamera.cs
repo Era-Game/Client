@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Cinemachine;
+using Managers;
 
 public class SpectatorCamera : MonoBehaviour
 {

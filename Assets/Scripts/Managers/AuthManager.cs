@@ -1,151 +1,155 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 using System;
-using UnityEngine.SceneManagement;
-using static AuthAPI;
+using static APIs.AuthAPI;
 using CoroutineHelper;
+using APIs;
 
-public class AuthManager : MonoBehaviour
+namespace Managers
 {
-    public static AuthManager instance;
-    private StatusOfUser statusOfUser; // enum list
-
-    // Start is called before the first frame update
-    void Start()
+    public class AuthManager : MonoBehaviour
     {
-        StartCoroutine(CheckStatusOfUser());
-    }
+        public static AuthManager instance;
+        private StatusOfUser statusOfUser; // enum list
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void Awake()
-    {
-        if (instance != null)
+        // Start is called before the first frame update
+        void Start()
         {
-            Destroy(gameObject);
-        }
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
+            StartCoroutine(CheckStatusOfUser());
         }
 
-    }
-
-    private IEnumerator CheckStatusOfUser()
-    {
-        yield return new WaitForEndOfFrame();
-
-        string statusString = PlayerPrefsHelper.GetAuthStatus();
-        Debug.Log("[AuthManager] Previous status of user: " + statusString);
-
-        // check user's current status type
-        if (Enum.TryParse(statusString, out statusOfUser))
+        // Update is called once per frame
+        void Update()
         {
-            switch (statusOfUser)
+
+        }
+
+        void Awake()
+        {
+            if (instance != null)
             {
-                case StatusOfUser.LOGGED_IN:
-                    Debug.Log("[AuthManager] user has logged in before");
-                    //StartCoroutine(loginWithAccessToken());
-                    break;
-
-                case StatusOfUser.LOGGED_OUT:
-                    Debug.Log("[AuthManager] user has logged out");
-                    //StartCoroutine(login_wait_for_start());
-                    break;
-
-                case StatusOfUser.NOT_ACTIVATED:
-                    Debug.Log("[AuthManager] user wasn't activated");
-                    //SendVerificationEmail();
-                    break;
-
-                case StatusOfUser.BANNED:
-                    Debug.Log("[AuthManager] user was banned");
-                    break;
-
-                default:
-                    break;
-
+                Destroy(gameObject);
             }
-        } else // first time to play (StatusOfUser=None)
-        {
-            Debug.Log("[AuthManager] first time to play");
-            LevelLoader.instance.loadScene("Login");
+            else
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+
         }
-    }
 
-    public void HandleLoginBtn()
-    {
-        // fetch the input data from Login Scene
-        string email = LoginManager.instance.getLoginEmail();
-        string password = LoginManager.instance.getLoginPassword();
-        Debug.Log("[AuthManager] Trying to login, got email: " + email + " and password: " + password);
-        StartCoroutine(login(email, password));
-    }
-
-    private IEnumerator login(string email, string password)
-    {
-        CoroutineWithData cd = new CoroutineWithData(this, AuthAPI.instance.Login(email, password));
-        yield return cd.coroutine;
-        
-        if (cd.result != null)
+        private IEnumerator CheckStatusOfUser()
         {
-            LoginResponse response = (LoginResponse) cd.result;
-            UIManager.instance.displayWarning("Success", "Welcome Back " + response.user.username + "!");
+            yield return new WaitForEndOfFrame();
 
-            PlayerPrefsHelper.SetAuthStatus(StatusOfUser.LOGGED_IN.ToString("g"));
-            PlayerPrefsHelper.SetDefaultData(response.user);
+            string statusString = PlayerPrefsHelper.GetAuthStatus();
+            Debug.Log("[AuthManager] Previous status of user: " + statusString);
 
-            //TODO: This line would trigger PlayerManager Update() condition
-            PlayerManager.instance.initPlayManagerUtilities();
-            PlayerManager.instance.setLoggedIn(true);
-            yield return new WaitForSeconds(1.5f);
-            LevelLoader.instance.display_loading_screen();
+            // check user's current status type
+            if (Enum.TryParse(statusString, out statusOfUser))
+            {
+                switch (statusOfUser)
+                {
+                    case StatusOfUser.LOGGED_IN:
+                        Debug.Log("[AuthManager] user has logged in before");
+                        //StartCoroutine(loginWithAccessToken());
+                        break;
 
-            Debug.Log("User log in successfully!");
+                    case StatusOfUser.LOGGED_OUT:
+                        Debug.Log("[AuthManager] user has logged out");
+                        //StartCoroutine(login_wait_for_start());
+                        break;
 
-            LevelLoader.instance.loadScene("lobby");
+                    case StatusOfUser.NOT_ACTIVATED:
+                        Debug.Log("[AuthManager] user wasn't activated");
+                        //SendVerificationEmail();
+                        break;
+
+                    case StatusOfUser.BANNED:
+                        Debug.Log("[AuthManager] user was banned");
+                        break;
+
+                    default:
+                        break;
+
+                }
+            }
+            else // first time to play (StatusOfUser=None)
+            {
+                Debug.Log("[AuthManager] first time to play");
+                LevelLoader.instance.loadScene("Login");
+            }
         }
-        else if (cd.result == null)
+
+        public void HandleLoginBtn()
         {
-            LoginManager.instance.update_warningLoginText("login error");
-            UIManager.instance.displayWarning("Error", "an error occurred while logging in");
+            // fetch the input data from Login Scene
+            string email = LoginManager.instance.getLoginEmail();
+            string password = LoginManager.instance.getLoginPassword();
+            Debug.Log("[AuthManager] Trying to login, got email: " + email + " and password: " + password);
+            StartCoroutine(login(email, password));
         }
-    }
 
-    private IEnumerator loginWithAccessToken(string accessToken)
-    {
-        CoroutineWithData cd = new CoroutineWithData(this, AuthAPI.instance.LoginWithToken(accessToken));
-        yield return cd.coroutine;
-
-        if (cd.result != null)
+        private IEnumerator login(string email, string password)
         {
-            LoginResponse response = (LoginResponse)cd.result;
-            UIManager.instance.displayWarning("Success", "Welcome Back " + response.user.username + "!");
+            CoroutineWithData cd = new CoroutineWithData(this, AuthAPI.instance.Login(email, password));
+            yield return cd.coroutine;
 
-            PlayerPrefsHelper.SetAuthStatus(StatusOfUser.LOGGED_IN.ToString("g"));
-            PlayerPrefsHelper.SetDefaultData(response.user);
+            if (cd.result != null)
+            {
+                LoginResponse response = (LoginResponse)cd.result;
+                UIManager.instance.displayWarning("Success", "Welcome Back " + response.user.username + "!");
 
-            //TODO: This line would trigger PlayerManager Update() condition
-            PlayerManager.instance.initPlayManagerUtilities();
-            PlayerManager.instance.setLoggedIn(true);
-            yield return new WaitForSeconds(1.5f);
-            LevelLoader.instance.display_loading_screen();
+                PlayerPrefsHelper.SetAuthStatus(StatusOfUser.LOGGED_IN.ToString("g"));
+                PlayerPrefsHelper.SetDefaultData(response.user);
 
-            Debug.Log("User log in successfully!");
+                //TODO: This line would trigger PlayerManager Update() condition
+                PlayerManager.instance.initPlayManagerUtilities();
+                PlayerManager.instance.setLoggedIn(true);
+                yield return new WaitForSeconds(1.5f);
+                LevelLoader.instance.display_loading_screen();
 
-            LevelLoader.instance.loadScene("lobby");
+                Debug.Log("User log in successfully!");
+
+                LevelLoader.instance.loadScene("lobby");
+            }
+            else if (cd.result == null)
+            {
+                LoginManager.instance.update_warningLoginText("login error");
+                UIManager.instance.displayWarning("Error", "an error occurred while logging in");
+            }
         }
-        else if (cd.result == null)
+
+        private IEnumerator loginWithAccessToken(string accessToken)
         {
-            LoginManager.instance.update_warningLoginText("login error");
-            UIManager.instance.displayWarning("Error", "an error occurred while logging in");
+            CoroutineWithData cd = new CoroutineWithData(this, AuthAPI.instance.LoginWithToken(accessToken));
+            yield return cd.coroutine;
+
+            if (cd.result != null)
+            {
+                LoginResponse response = (LoginResponse)cd.result;
+                UIManager.instance.displayWarning("Success", "Welcome Back " + response.user.username + "!");
+
+                PlayerPrefsHelper.SetAuthStatus(StatusOfUser.LOGGED_IN.ToString("g"));
+                PlayerPrefsHelper.SetDefaultData(response.user);
+
+                //TODO: This line would trigger PlayerManager Update() condition
+                PlayerManager.instance.initPlayManagerUtilities();
+                PlayerManager.instance.setLoggedIn(true);
+                yield return new WaitForSeconds(1.5f);
+                LevelLoader.instance.display_loading_screen();
+
+                Debug.Log("User log in successfully!");
+
+                LevelLoader.instance.loadScene("lobby");
+            }
+            else if (cd.result == null)
+            {
+                LoginManager.instance.update_warningLoginText("login error");
+                UIManager.instance.displayWarning("Error", "an error occurred while logging in");
+            }
         }
     }
 }
+

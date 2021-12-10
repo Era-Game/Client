@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Michsky.UI.ModernUIPack;
 using TMPro;
+using Managers;
 
 public class UIManager : MonoBehaviour
 {

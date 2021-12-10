@@ -4,7 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Wild_Animals
+  - AuthManager
   layers:
   - Default
   - TransparentFX
