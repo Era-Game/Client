@@ -19,7 +19,8 @@ namespace Utils
         Default,
     }
 
-    public static class PlayerPrefsHelper {
+    public static class PlayerPrefsHelper
+    {
         public static string GetAuthStatus()
         {
             Debug.Log("[PlayerPrefsHelper]" + PlayerPrefs.GetString(PlayerData.AuthStatus.ToString("g")));
@@ -32,12 +33,21 @@ namespace Utils
 
         public static string GetDefaultData()
         {
-            Debug.Log("[PlayerPrefsHelper]" + PlayerPrefs.GetString(PlayerData.AuthStatus.ToString("g")));
-            return PlayerPrefs.GetString(PlayerData.AuthStatus.ToString("g"));
+            Debug.Log("[PlayerPrefsHelper]" + PlayerPrefs.GetString(PlayerData.Default.ToString("g")));
+            return PlayerPrefs.GetString(PlayerData.Default.ToString("g"));
         }
         public static void SetDefaultData(User user)
         {
-            PlayerPrefs.SetString("AuthStatus", JsonUtility.ToJson(user));
+            if (user != null)
+            {
+                PlayerPrefs.SetString("Default", JsonUtility.ToJson(user));
+                PlayerManager.instance.SetPlayer(user);
+            }
         }
+        public static void ClearPlayerPrefsData()
+        {
+            PlayerPrefs.DeleteAll();
+        }
+
     }
 }

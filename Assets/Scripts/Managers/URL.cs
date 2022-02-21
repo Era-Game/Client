@@ -11,6 +11,10 @@ public class URL
     public static readonly string Join_Team_URL = "https://us-central1-team-building-game-6bd67.cloudfunctions.net/join_team"; //Request POST: teamCode, UID, gameType
     public static readonly string Leave_Team_URL = "https://us-central1-team-building-game-6bd67.cloudfunctions.net/leave_team"; //Request POST: teamCode, UID
     public static readonly string Team_Data_Update_URL = "https://us-central1-team-building-game-6bd67.cloudfunctions.net/update_team"; //Request POST: teamCode, UID
+    public static readonly string WS_Create_Team_URL = "ws://127.0.0.1:8080"; //Request POST: teamname, UID, gameType
+    public static readonly string WS_Join_Team_URL = "ws://127.0.0.1:8080"; //Request POST: teamCode, UID, gameType
+    public static readonly string WS_Leave_Team_URL = "ws://127.0.0.1:8080"; //Request POST: teamCode, UID
+    public static readonly string WS_Team_Data_Update_URL = "ws://127.0.0.1:8080"; //Request POST: teamCode, UID
 
     public static readonly string Create_Game_URL = Default_URL + "create_game"; //Request POST: teamCode, teamname, UID
     public static readonly string Leave_Game_URL = Default_URL + "leave_game"; //Request POST: gameID, teamCode, UID

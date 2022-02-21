@@ -116,6 +116,7 @@ public class LoginManager : MonoBehaviour
 
     public void logout()
     {
-        FirebaseManager.instance.LogOutButton();
+        AuthManager.instance.HandleLogoutBtn();
+        //FirebaseManager.instance.LogOutButton();
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using Model;
 using UnityEngine;
 using UnityEngine.Networking;
+using Utils;
 
 public class AuthAPI : MonoBehaviour
 {
@@ -103,6 +104,11 @@ public class AuthAPI : MonoBehaviour
             Debug.Log("Response text:" + text);
             yield return new LoginResponse().CreateFromJSON(text);
         }
+    }
+    public void Logout()
+    {
+        Debug.Log("[AuthAPI] start logout.");
+        PlayerPrefsHelper.ClearPlayerPrefsData();
     }
 
     private void Awake()

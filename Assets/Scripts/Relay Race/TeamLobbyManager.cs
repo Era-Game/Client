@@ -413,14 +413,15 @@ public class TeamLobbyManager : MonoBehaviour
 
         if (inGameData.gameID != "placeholder")
         {
-            FirebaseManager.instance.updateCustomQueueData(inGameData.gameID);
+            //FirebaseManager.instance.updateCustomQueueData(inGameData.gameID);
 
-            while (!FirebaseManager.instance.isDataRecieved())
+            while (!API.instance.dataRecieved)
+            //while (!FirebaseManager.instance.isDataRecieved())
             {
                 yield return null;
             }
 
-            queueTeamNames = FirebaseManager.instance.getQueueTeamNames();
+            //queueTeamNames = FirebaseManager.instance.getQueueTeamNames();
 
             gameTitleText.text = "Game Queue (GameID: " + inGameData.gameID + ")";
 
@@ -428,7 +429,7 @@ public class TeamLobbyManager : MonoBehaviour
             {
                 if (queueTeamNames[i] != localQueueTeamNames[i])
                 {
-                    if (queueTeamNames[i] != "placeholder" && queueTeamNames[i] != "" && queueTeamNames[i] != null)
+                    if (queueTeamNames[i] != "placeholder" && string.IsNullOrEmpty(queueTeamNames[i]))
                     {
                         queueTeamNameTexts[i].text = queueTeamNames[i];
                         queueTeams[i].SetActive(true);
@@ -862,7 +863,7 @@ public class TeamLobbyManager : MonoBehaviour
         }
         */
         Debug.Log("Application Pause Called in TeamLobby");
-        leave_Button();
+        //leave_Button();
 
     }
 

@@ -1,11 +1,11 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
+using WebSocketSharp;
+using System;
+using Utils;
 
 public class API : MonoBehaviour
 {
@@ -70,12 +70,13 @@ public class API : MonoBehaviour
             responseMessage = www.downloadHandler.text;
         }
 
-        Debug.Log("Rejoin Check Returns with: (" + statusCode + ") " + responseMessage );
+        Debug.Log("Rejoin Check Returns with: (" + statusCode + ") " + responseMessage);
     }
     public void Create_Team(string _teamName, string _UID, string _gameType)
     {
         Debug.Log("Posting Create Team Request");
-        StartCoroutine(Create_Team_Request(_teamName, _UID, _gameType));
+        //StartCoroutine(Create_Team_Request(_teamName, _UID, _gameType));
+        StartCoroutine(WS_Create_Team_Request(_teamName, _UID));
     }
 
     IEnumerator Create_Team_Request(string _teamName, string _UID, string _gameType)
@@ -88,7 +89,14 @@ public class API : MonoBehaviour
         data.Add("GAME_TYPE", _gameType);
 
         string json = JSONIZE(data);
-
+        WebSocket socket_client = new WebSocket(URL.WS_Create_Team_URL);
+        socket_client.Connect();
+        socket_client.OnMessage += (action, e) =>
+        {
+            Console.WriteLine("Laputa says: " + e.Data);
+        };
+        yield return socket_client;
+        //To Create team via url
         UnityWebRequest www = UnityWebRequest.Get(URL.Create_Team_URL + json);
         yield return www.SendWebRequest();
 
@@ -114,11 +122,42 @@ public class API : MonoBehaviour
 
         Debug.Log("Create Team Request Returns with: (" + statusCode + ") " + responseMessage);
     }
+    IEnumerator WS_Create_Team_Request(string team_id, string u_id)
+    {
+        dataRecieved = false;
+        MessageEventArgs message;
+        WebSocket socket_client = new WebSocket(URL.WS_Create_Team_URL + '/' + team_id);//ws://127.0.0.1/{team_id}
+        socket_client.OnMessage += (sender, e) =>
+        {
+            message = e;
+            if (bool.TryParse(e.Data.Split(';')[1], out dataRecieved))
+            {
+                for (int i = 0; i < TeamLobbyManager.instance.queueTeamNames.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(TeamLobbyManager.instance.queueTeamNames[i]))
+                    {
+                        TeamLobbyManager.instance.queueTeamNames[i] = u_id;
+                        break;
+                    }
+                }
+                statusCode = 200;
+            }
+            else
+            {
+                statusCode = 403;//bad request
+            }
+        };
+        socket_client.Connect();
+        socket_client.Send($"j;{u_id}");
+        yield return socket_client;
+        Debug.Log("Create Team Request Returns with: (" + statusCode + ") " + responseMessage);
+    }
 
     public void Join_Team(string _teamCode, string _UID, string _gameType)
     {
         Debug.Log("Posting Join Team Request");
-        StartCoroutine(Join_Team_Request(_teamCode, _UID, _gameType));
+        //StartCoroutine(Join_Team_Request(_teamCode, _UID, _gameType));
+        StartCoroutine(WS_Join_Team_Request(_teamCode, _UID));
     }
 
     IEnumerator Join_Team_Request(string _teamCode, string _UID, string _gameType)
@@ -131,7 +170,7 @@ public class API : MonoBehaviour
         data.Add("GAME_TYPE", _gameType);
 
         string json = JSONIZE(data);
-        
+
         UnityWebRequest www = UnityWebRequest.Get(URL.Join_Team_URL + json);
         yield return www.SendWebRequest();
 
@@ -153,16 +192,38 @@ public class API : MonoBehaviour
         {
             statusCode = www.responseCode;
             responseMessage = www.downloadHandler.text;
-            
+
         }
 
         Debug.Log("Join Team Request Returns with: (" + statusCode + ") " + responseMessage);
     }
-
+    IEnumerator WS_Join_Team_Request(string team_id, string u_id)
+    {
+        dataRecieved = false;
+        MessageEventArgs message;
+        WebSocket socket_client = new WebSocket(URL.WS_Create_Team_URL + '/' + team_id);
+        socket_client.OnMessage += (sender, e) =>
+        {
+            message = e;
+            if (bool.TryParse(e.Data.Split(';')[1], out dataRecieved))
+            {
+                statusCode = 200;
+            }
+            else
+            {
+                statusCode = 403;//bad request
+            }
+        };
+        socket_client.Connect();
+        socket_client.Send($"j;{u_id}");
+        yield return socket_client;
+        Debug.Log("Team Join Request Returns with: (" + statusCode + ") " + responseMessage);
+    }
     public void Leave_Team(string _teamCode, string _UID)
     {
         Debug.Log("Posting Leave Team Request");
-        StartCoroutine(Leave_Team_Request(_teamCode, _UID));
+        //StartCoroutine(Leave_Team_Request(_teamCode, _UID));
+        StartCoroutine(WS_Leave_Team_Request(_teamCode, _UID));
     }
 
     IEnumerator Leave_Team_Request(string _teamCode, string _UID)
@@ -174,7 +235,7 @@ public class API : MonoBehaviour
         data.Add("UID", _UID);
 
         string json = JSONIZE(data);
-       
+
 
         UnityWebRequest www = UnityWebRequest.Get(URL.Leave_Team_URL + json);
         yield return www.SendWebRequest();
@@ -202,6 +263,30 @@ public class API : MonoBehaviour
 
         Debug.Log("Leave Team Request Returns with: (" + statusCode + ") " + responseMessage);
     }
+    IEnumerator WS_Leave_Team_Request(string team_id, string u_id)
+    {
+        dataRecieved = false;
+        MessageEventArgs message;
+        WebSocket socket_client = new WebSocket(URL.WS_Leave_Team_URL + '/' + team_id);
+        socket_client.OnMessage += (sender, e) =>
+        {
+            message = e;
+            if (bool.TryParse(message.Data.Split(';')[1], out dataRecieved))
+            {
+                dataRecieved = true;
+                statusCode = 200;
+            }
+            else
+            {
+                statusCode = 403;//bad requet
+            }
+        };
+        socket_client.Connect();
+        socket_client.Send($"l;{u_id}");
+        yield return socket_client;
+
+        Debug.Log("Leave Team Request Returns with: (" + statusCode + ") " + responseMessage);
+    }
 
     public void Update_Team_Data(string _teamCode, string _UID)
     {
@@ -211,39 +296,45 @@ public class API : MonoBehaviour
 
     IEnumerator Update_Team_Data_Request(string _teamCode, string _UID)
     {
-        dataRecieved = false;
-
-        Dictionary<string, string> data = new Dictionary<string, string>();
-        data.Add("TEAMCODE", _teamCode);
-        data.Add("UID", _UID);
-
-        string json = JSONIZE(data);
-        
-        UnityWebRequest www = UnityWebRequest.Get(URL.Team_Data_Update_URL + json);
-        yield return www.SendWebRequest();
-
         dataRecieved = true;
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            if (www.responseCode == 401)
-            {
-                statusCode = www.responseCode;
-                responseMessage = www.downloadHandler.text;
-            }
-            else
-            {
-                Debug.LogError(www.error);
-            }
-        }
+
+        //Dictionary<string, string> data = new Dictionary<string, string>();
+        //data.Add("TEAMCODE", _teamCode);
+        //data.Add("UID", _UID);
+
+        //string json = JSONIZE(data);
+
+        //UnityWebRequest www = UnityWebRequest.Get(URL.Team_Data_Update_URL + json);
+        //yield return www.SendWebRequest();
+
+        //dataRecieved = true;
+        //if (www.result != UnityWebRequest.Result.Success)
+        //{
+        //    if (www.responseCode == 401)
+        //    {
+        //        statusCode = www.responseCode;
+        //        responseMessage = www.downloadHandler.text;
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError(www.error);
+        //    }
+        //}
+        //else
+        //{
+        //    statusCode = www.responseCode;
+        //    responseMessage = www.downloadHandler.text;
+        //    //Debug.Log(responseMessage);
+        //    teamData = JsonConvert.DeserializeObject<TeamData>(www.downloadHandler.text);
+        //}
+        if (String.IsNullOrEmpty(_teamCode.Trim()) && string.IsNullOrEmpty(_UID.Trim()))
+            yield return "Failed";
         else
         {
-            statusCode = www.responseCode;
-            responseMessage = www.downloadHandler.text;
-            //Debug.Log(responseMessage);
-            teamData = JsonConvert.DeserializeObject<TeamData>(www.downloadHandler.text);
+            yield return "Success";
+            Debug.Log("Update Team Request Returns with: (" + statusCode + ") " + responseMessage);
         }
 
-        Debug.Log("Update Team Request Returns with: (" + statusCode + ") " + responseMessage);
     }
 
     public TeamData getTeamData()
@@ -313,7 +404,7 @@ public class API : MonoBehaviour
         data.Add("UID", _UID);
 
         string json = JSONIZE(data);
-       
+
         UnityWebRequest www = UnityWebRequest.Get(URL.Create_Game_URL + json);
         yield return www.SendWebRequest();
 
@@ -355,7 +446,7 @@ public class API : MonoBehaviour
         data.Add("UID", _UID);
 
         string json = JSONIZE(data);
-     
+
 
         UnityWebRequest www = UnityWebRequest.Get(URL.Leave_Game_URL + json);
         yield return www.SendWebRequest();
@@ -399,7 +490,7 @@ public class API : MonoBehaviour
         data.Add("UID", _UID);
 
         string json = JSONIZE(data);
-       
+
         UnityWebRequest www = UnityWebRequest.Get(URL.Join_Game_URL + json);
         yield return www.SendWebRequest();
 
@@ -439,23 +530,23 @@ public class API : MonoBehaviour
         data.Add("TEAMCODE", _teamCode);
         data.Add("UID", _UID);
 
-        string json = JSONIZE(data);
+        //string json = JSONIZE(data);
 
-        UnityWebRequest www = UnityWebRequest.Get(URL.Update_InGame_Data_URL + json);
-        yield return www.SendWebRequest();
+        //UnityWebRequest www = UnityWebRequest.Get(URL.Update_InGame_Data_URL + json);
+        yield return null;//www.SendWebRequest();
         //yield return new WaitForSeconds(0.5f);
         dataRecieved = true;
 
-        
-        statusCode = www.responseCode;
-        responseMessage = www.downloadHandler.text;
+
+        statusCode = 200;// www.responseCode;
+        responseMessage = "Success";// www.downloadHandler.text;
         Debug.Log("Update Game Request Returns with: (" + statusCode + ") " + responseMessage);
 
-        if (statusCode == 200)
-        {
-            inGameData = JsonConvert.DeserializeObject<InGameData>(www.downloadHandler.text);
-        }
-        
+        //if (statusCode == 200)
+        //{
+        //    inGameData = JsonConvert.DeserializeObject<InGameData>(www.downloadHandler.text);
+        //}
+
     }
 
 
@@ -763,7 +854,7 @@ public class API : MonoBehaviour
         {
             queueData = JsonConvert.DeserializeObject<QueueData>(www.downloadHandler.text);
         }
-        
+
 
     }
 
@@ -803,7 +894,7 @@ public class API : MonoBehaviour
     public void Update_Spectator_Data(string _gameID)
     {
         Debug.Log("Posting Update Spectator Request");
-        StartCoroutine(Update_Spectator_Data_Coroutine( _gameID));
+        StartCoroutine(Update_Spectator_Data_Coroutine(_gameID));
     }
 
     private IEnumerator Update_Spectator_Data_Coroutine(string _gameID)
@@ -831,7 +922,7 @@ public class API : MonoBehaviour
         {
             spectatorData = JsonConvert.DeserializeObject<SpectatorData>(www.downloadHandler.text);
         }
-        
+
     }
 
     /*

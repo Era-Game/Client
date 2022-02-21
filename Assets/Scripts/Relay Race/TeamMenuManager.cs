@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Michsky.UI.ModernUIPack;
 using TMPro;
+using Model;
+using Utils;
 
 public class TeamMenuManager : MonoBehaviour
 {
@@ -21,6 +23,7 @@ public class TeamMenuManager : MonoBehaviour
     //Player Data
     private string _UID;
     private bool isCustom;
+    private User Player;
 
 
     private void Awake()
@@ -28,11 +31,12 @@ public class TeamMenuManager : MonoBehaviour
         resetScene();
         getPlayerData();
     }
-    
+
     public void getPlayerData()
     {
-        _UID = PlayerManager.instance.getData("uid");
-        isCustom = PlayerManager.instance.getData("gameName") == "Custom Relay Game";
+        Player = PlayerManager.instance.GetUser();
+        _UID = Player.id.ToString();//PlayerManager.instance.getData("uid");
+        isCustom = Player.gameStatus_gameName == "Custom Relay Game";//PlayerManager.instance.getData("gameName") == "Custom Relay Game";
     }
     public void resetScene()
     {
@@ -50,15 +54,18 @@ public class TeamMenuManager : MonoBehaviour
     }
     public void Create_Team()
     {
-        StartCoroutine(Create_Team_Coroutine());
+        string tempTeamName = TeamNameInputField.text;
+        StartCoroutine(Create_Team_Coroutine(tempTeamName));
     }
 
-    private IEnumerator Create_Team_Coroutine()
+    private IEnumerator Create_Team_Coroutine(string tempTeamName)
     {
         loadingUI.SetActive(true);
-        string tempTeamName = TeamNameInputField.text;
         Debug.Log(_UID);
-        API.instance.Create_Team(tempTeamName, _UID, PlayerManager.instance.getData("gameName"));
+        Debug.Log(@"Player ID is: " + Player.id.ToString());
+        //string defaultData = PlayerPrefsHelper.GetDefaultData();
+        //User player = JsonUtility.FromJson<User>(PlayerPrefsHelper.GetDefaultData());
+        API.instance.Create_Team(tempTeamName, Player.id.ToString(), PlayerManager.instance.getData("gameName"));
 
         while (!API.instance.dataRecieved)
         {
@@ -71,6 +78,8 @@ public class TeamMenuManager : MonoBehaviour
         if (_statusCode == 200)
         {
             push_notification("Success", "Entering team " + tempTeamName + "'s team lobby...");
+            Player.teamCode = tempTeamName;
+            PlayerPrefsHelper.SetDefaultData(Player);
             yield return new WaitForSeconds(1f);
             //SceneManager.LoadScene("Team Lobby");
             LevelLoader.instance.loadScene("Team Lobby");
@@ -109,7 +118,7 @@ public class TeamMenuManager : MonoBehaviour
     private IEnumerator Join_Team_Coroutine(string _teamCode)
     {
         loadingUI.SetActive(true);
-        API.instance.Join_Team(_teamCode, _UID, PlayerManager.instance.getData("gameName"));
+        API.instance.Join_Team(_teamCode, Player.id.ToString(), PlayerManager.instance.getData("gameName"));
 
         while (!API.instance.dataRecieved)
         {
@@ -121,7 +130,7 @@ public class TeamMenuManager : MonoBehaviour
 
         if (_statusCode == 200)
         {
-            API.instance.Update_Team_Data(_teamCode, _UID);
+            API.instance.Update_Team_Data(_teamCode, Player.id.ToString());
             while (!API.instance.dataRecieved)
             {
                 yield return null;
@@ -133,6 +142,8 @@ public class TeamMenuManager : MonoBehaviour
             if (_statusCode == 200)
             {
                 push_notification("Success", "Entering team lobby...");
+                Player.teamCode = _teamCode;
+                PlayerPrefsHelper.SetDefaultData(Player);
                 yield return new WaitForSeconds(1f);
                 //SceneManager.LoadScene("Team Lobby");
                 LevelLoader.instance.loadScene("Team Lobby");

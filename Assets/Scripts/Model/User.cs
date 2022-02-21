@@ -7,6 +7,29 @@ namespace Model
     [Serializable]
     public class User
     {
+        /*
+         * {
+         *  "id":3,
+         *  "username":"hardywang@gmail.com",
+         *  "email":"hardywang@gmail.com",
+         *  "status":"activated",
+         *  "org_name":"",
+         *  "dept_name":"",
+         *  "DefaultSkinId":0,
+         *  "Coins":0,
+         *  "DefaultPetId":0,
+         *  "ProfileImageURL":"",
+         *  "ownedSkins":[],
+         *  "ownedPets":[],
+         *  "IsOnline":"",
+         *  "IsInGame":"",
+         *  "Steps":"",
+         *  "teamCode":"",
+         *  "skillsActivated":[],
+         *  "gameStatus_gameName":"",
+         *  "gameStatus_status":""
+         *  }
+         */
         // default value
         public int id;
         public string username;

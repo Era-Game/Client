@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Model;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utils;
 
 /// <summary>
 /// PlayerManager stores individual user data
@@ -12,6 +14,8 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager instance;
 
     public bool isRejoin = false;
+
+    private User player;
 
     //Private Member Variables -> Data of individual user data
     private string UID;
@@ -36,7 +40,7 @@ public class PlayerManager : MonoBehaviour
     private bool lobbyLoaded;
     private bool gotSomeData;
     private bool gettingData;
-    
+
     long _statusCode;
     string _responseMessage;
 
@@ -55,7 +59,15 @@ public class PlayerManager : MonoBehaviour
         gotSomeData = false;
         gettingData = false;
         ownedSkins = new string[NUM_SKINS];
-        
+    }
+
+    public void SetPlayer(User player)
+    {
+        this.player = player;
+    }
+    public User GetPlayer()
+    {
+        return player; 
     }
 
     private void Awake()
@@ -164,67 +176,98 @@ public class PlayerManager : MonoBehaviour
     {
         if (SkinID == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("skinID");
+            PlayerPrefs.SetString("skinID", player.DefaultSkinId.ToString());
+            //FirebaseManager.instance.initSpecificAccountData("skinID");
         }
 
         if (Username == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("username");
+            PlayerPrefs.SetString("username", player.username);
+
+            //FirebaseManager.instance.initSpecificAccountData("username");
         }
 
         if (IsOnline == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("isOnline");
+            PlayerPrefs.SetString("isOnline", player.IsOnline);
+
+            //FirebaseManager.instance.initSpecificAccountData("isOnline");
         }
 
         if (IsInGame == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("isInGame");
+            PlayerPrefs.SetString("isInGame", player.IsInGame);
+
+            //FirebaseManager.instance.initSpecificAccountData("isInGame");
         }
 
         if (Coins == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("coins");
+            PlayerPrefs.SetString("coins", player.Coins.ToString());
+            //FirebaseManager.instance.initSpecificAccountData("coins");
         }
 
         if (Steps == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("steps");
+            PlayerPrefs.SetString("steps", player.Steps);
+
+            //FirebaseManager.instance.initSpecificAccountData("steps");
         }
 
         if (UID == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("uid");
+            PlayerPrefs.SetString("uid", player.id.ToString());
+
+            //FirebaseManager.instance.initSpecificAccountData("uid");
         }
 
         if (ownedSkins[0] == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("ownedSkins");
+            for (int i = 0; i < NUM_SKINS && ownedSkins.Length != 0; i++)
+            {
+                if (i < ownedSkins.Length && ownedSkins[i] != null)
+                    PlayerPrefs.SetString("ownedSkins" + i, player.ownedSkins[i].ToString());
+            }
+
+            //FirebaseManager.instance.initSpecificAccountData("ownedSkins");
         }
 
         if (PetID == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("petID");
+            PlayerPrefs.SetString("petID", player.DefaultPetId.ToString());
+
+            //FirebaseManager.instance.initSpecificAccountData("petID");
         }
 
         if (ownedPets[0] == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("ownedPets");
+            for (int i = 0; i < NUM_PETS && ownedPets.Length != 0; i++)
+            {
+                if (i < ownedPets.Length && ownedPets[i] != null)
+                    PlayerPrefs.SetString("ownedPets", player.ownedPets[i].ToString());
+
+            }
+            //FirebaseManager.instance.initSpecificAccountData("ownedPets");
         }
 
         if (teamCode == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("teamCode");
+            PlayerPrefs.SetString("teamCode", player.teamCode);
+
+            //FirebaseManager.instance.initSpecificAccountData("teamCode");
         }
 
         if (gameStatus_gameName == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("gameName");
+            PlayerPrefs.SetString("gameName", player.gameStatus_gameName);
+
+            //FirebaseManager.instance.initSpecificAccountData("gameName");
         }
 
         if (gameStatus_status == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("gameStatus");
+            PlayerPrefs.SetString("gameStatus", player.gameStatus_status);
+            //FirebaseManager.instance.initSpecificAccountData("gameStatus");
         }
         /*if (IsInRelayRace == null)
         {
@@ -233,13 +276,16 @@ public class PlayerManager : MonoBehaviour
 
         if (Profile_Image_URL == null)
         {
-            FirebaseManager.instance.initSpecificAccountData("Profile_Image_URL");
+            PlayerPrefs.SetString("Profile_Image_URL", player.ProfileImageURL);
+
+            //FirebaseManager.instance.initSpecificAccountData("Profile_Image_URL");
         }
     }
     void Update()
     {
         //Debug Block:
         //Update_Debug_Block();
+        
 
         if (!dataLoaded && gotSomeData)
         {
@@ -264,7 +310,8 @@ public class PlayerManager : MonoBehaviour
 
         if (!gettingData && !dataLoaded && loggedIn)
         {
-            StartCoroutine(getDataFromFirebase());
+            //StartCoroutine(PlayerPrefsHelper.GetDefaultData());
+            //StartCoroutine(getDataFromFirebase());
         }
 
         if (dataLoaded && loggedIn && !lobbyLoaded)
@@ -409,7 +456,7 @@ public class PlayerManager : MonoBehaviour
     {
         gameStatus_gameName = gameName;
         gameStatus_status = status;
-        FirebaseManager.instance.setGameStatus(gameStatus_gameName, gameStatus_status);
+        //FirebaseManager.instance.setGameStatus(gameStatus_gameName, gameStatus_status);
     }
 
     public void setUsername(string str)
@@ -420,28 +467,28 @@ public class PlayerManager : MonoBehaviour
     public void setIsOnline(string str)
     {
         IsOnline = str;
-        bool online_status = str == "True" ? true : false; 
-        FirebaseManager.instance.setIsOnline(online_status);
+        bool online_status = str == "True" ? true : false;
+        //FirebaseManager.instance.setIsOnline(online_status);
     }
 
     public void setIsInGame(string str)
     {
         IsInGame = str;
         bool in_Game_status = str == "True" ? true : false;
-        FirebaseManager.instance.setIsInGame(in_Game_status);
+        //FirebaseManager.instance.setIsInGame(in_Game_status);
     }
 
     public void addCoins(string str)
     {
         Coins = (int.Parse(Coins) + int.Parse(str)).ToString();
         int amount = int.Parse(str);
-        FirebaseManager.instance.addCoins(amount);
+        //FirebaseManager.instance.addCoins(amount);
     }
     public void setCoins(string str)
     {
         Coins = str;
         int amount = int.Parse(str);
-        FirebaseManager.instance.setCoins(amount);
+        //FirebaseManager.instance.setCoins(amount);
     }
 
     public void addSteps(string str)
@@ -449,13 +496,13 @@ public class PlayerManager : MonoBehaviour
         Steps = str;
         Steps = (int.Parse(Steps) + int.Parse(str)).ToString();
         int amount = int.Parse(str);
-        FirebaseManager.instance.addSteps(amount);
+        //FirebaseManager.instance.addSteps(amount);
     }
     public void setSteps(string str)
     {
         Steps = str;
         int amount = int.Parse(str);
-        FirebaseManager.instance.setSteps(amount);
+        //FirebaseManager.instance.setSteps(amount);
     }
 
 
@@ -468,7 +515,7 @@ public class PlayerManager : MonoBehaviour
     {
         SkinID = str;
         int ID = int.Parse(str);
-        FirebaseManager.instance.setSkinID(ID);
+        //FirebaseManager.instance.setSkinID(ID);
     }
 
     private void debug_log_array(string[] str)
@@ -500,14 +547,14 @@ public class PlayerManager : MonoBehaviour
     public void buySkin(int ID)
     {
         ownedSkins[ID] = "True";
-        FirebaseManager.instance.addSkinByID(ID);
+        //FirebaseManager.instance.addSkinByID(ID);
     }
 
     public void setPetID(string str)
     {
         PetID = str;
         int ID = int.Parse(str);
-        FirebaseManager.instance.setPetID(ID);
+        //FirebaseManager.instance.setPetID(ID);
     }
 
     public void setOwnedPets(string[] str)
@@ -528,13 +575,13 @@ public class PlayerManager : MonoBehaviour
     public void buyPet(int ID)
     {
         ownedPets[ID] = "True";
-        FirebaseManager.instance.addPetByID(ID);
+        //FirebaseManager.instance.addPetByID(ID);
     }
 
     public void setTeamCode(string str)
     {
         teamCode = str;
-        FirebaseManager.instance.setTeamCode(str);
+        //FirebaseManager.instance.setTeamCode(str);
     }
 
     public void setProfile_Image_URL(string str)
@@ -568,43 +615,43 @@ public class PlayerManager : MonoBehaviour
     {
         if (str == "username")
         {
-            return Username;
+            return player.username;
         }
         else if (str == "online status")
         {
-            return IsOnline;
+            return player.IsOnline;
         }
         else if (str == "in game status")
         {
-            return IsInGame;
+            return player.gameStatus_status;
         }
         else if (str == "coins")
         {
-            return Coins;
+            return player.Coins.ToString();
         }
         else if (str == "steps")
         {
-            return Steps;
+            return player.Steps;
         }
         else if (str == "uid")
         {
-            return UID;
+            return player.id.ToString();
         }
         else if (str == "skinID")
         {
-            return SkinID;
+            return player.DefaultSkinId.ToString();
         }
         else if (str == "petID")
         {
-            return PetID;
+            return player.DefaultPetId.ToString();
         }
         else if (str == "teamCode")
         {
-            return teamCode;
+            return player.teamCode;
         }
         else if (str == "gameName")
         {
-            return gameStatus_gameName;
+            return player.gameStatus_gameName;
         }
         else if (str == "gameStatus")
         {
@@ -612,7 +659,7 @@ public class PlayerManager : MonoBehaviour
         }
         else if (str == "Profile_Image_URL")
         {
-            return Profile_Image_URL;
+            return player.ProfileImageURL;
         }
         else
         {
@@ -620,14 +667,19 @@ public class PlayerManager : MonoBehaviour
             return "";
         }
     }
+    public User GetUser()
+    {
+        return player;
+    }
 
     private void syncData()
     {
         if (loggedIn)
         {
-            FirebaseManager.instance.getData();
+            PlayerPrefsHelper.GetDefaultData();
+            //FirebaseManager.instance.getData();
         }
-        
+
     }
     public string[] getOwnedSkins()
     {

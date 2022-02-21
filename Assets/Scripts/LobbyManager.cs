@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
+using Utils;
+using Model;
+
 public class LobbyManager : MonoBehaviour
 {
     public static LobbyManager instance;
@@ -28,7 +31,8 @@ public class LobbyManager : MonoBehaviour
         if (!disableUI)
         {
             PlayerManager.instance.initPlayManagerUtilities();
-            FirebaseManager.instance.LogOutButton();
+            //FirebaseManager.instance.LogOutButton();
+            AuthManager.instance.HandleLogoutBtn();
             LevelLoader.instance.loadScene("Login");
         }
 
@@ -95,8 +99,8 @@ public class LobbyManager : MonoBehaviour
         dataLoaded = false;
         disableUI = false;
         PlayerManager.instance.setIsOnline("True");
-        usernameText.text = PlayerManager.instance.getData("username");
-        coinText.text = "x " + PlayerManager.instance.getData("coins");
+        usernameText.text = PlayerManager.instance.GetPlayer().username;//PlayerManager.instance.getData("username");
+        coinText.text = "x " + PlayerManager.instance.GetPlayer().Coins;//PlayerManager.instance.getData("coins");
         
         clone = Instantiate(SkinManager.instance.getSkinByID(int.Parse(PlayerManager.instance.getData("skinID"))), character_spawn.position, Quaternion.identity);
         clone.transform.parent = character_spawn;

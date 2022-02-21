@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 using System;
-using UnityEngine.SceneManagement;
 using static AuthAPI;
 using CoroutineHelper;
 
@@ -21,7 +19,7 @@ public class AuthManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void Awake()
@@ -73,7 +71,8 @@ public class AuthManager : MonoBehaviour
                     break;
 
             }
-        } else // first time to play (StatusOfUser=None)
+        }
+        else // first time to play (StatusOfUser=None)
         {
             Debug.Log("[AuthManager] first time to play");
             LevelLoader.instance.loadScene("Login");
@@ -89,14 +88,21 @@ public class AuthManager : MonoBehaviour
         StartCoroutine(login(email, password));
     }
 
+    public void HandleLogoutBtn()
+    {
+        // fetch the input data from Login Scene
+        Debug.Log("[AuthManager] Trying to logout, got email: ");
+        StartCoroutine(logout());
+    }
+
     private IEnumerator login(string email, string password)
     {
         CoroutineWithData cd = new CoroutineWithData(this, AuthAPI.instance.Login(email, password));
         yield return cd.coroutine;
-        
+
         if (cd.result != null)
         {
-            LoginResponse response = (LoginResponse) cd.result;
+            LoginResponse response = (LoginResponse)cd.result;
             UIManager.instance.displayWarning("Success", "Welcome Back " + response.user.username + "!");
 
             PlayerPrefsHelper.SetAuthStatus(StatusOfUser.LOGGED_IN.ToString("g"));
@@ -146,6 +152,18 @@ public class AuthManager : MonoBehaviour
         {
             LoginManager.instance.update_warningLoginText("login error");
             UIManager.instance.displayWarning("Error", "an error occurred while logging in");
+        }
+    }
+    private string logout()
+    {
+        try
+        {
+            AuthAPI.instance.Logout();
+            return "Success";
+        }
+        catch (Exception err)
+        {
+            return err.Message;
         }
     }
 }
